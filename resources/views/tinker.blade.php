@@ -32,6 +32,18 @@
         </div>
 
         <botman-tinker api-endpoint="/botman"></botman-tinker>
+
+        <div>
+            <p>Commands available:</p>
+            <p>
+                - Hi / Hello / Hey<br>
+                - Set default currency<br>
+                - Deposit <code>value currency</code> (e.g. deposit 150 USD)<br>
+                - Withdraw <code>value currency</code> (e.g. withdraw 265.48 BRL)<br>
+                - Show account balance<br>
+                - clear
+            </p>
+        </div>
     </div>
 </div>
 
