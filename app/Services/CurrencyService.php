@@ -13,34 +13,45 @@ class CurrencyService
     public function __construct(CurrencyRepository $currency)
     {
         $this->currency = $currency;
-    }
+	}
+	
+	public function checkValidCurrency($currency)
+	{
+		$currencies = $this->currency->getNameAndInitials();
+		foreach($currencies as $c) {
+			if($c['initials'] === strtoupper($currency))
+				return true;
+		}
 
-    public function index()
-	{
-		return $this->currency->all();
+		return false;
 	}
+
+    // public function index()
+	// {
+	// 	return $this->currency->all();
+	// }
  
-    public function create(Request $request)
-	{
-        $attributes = $request->all();
+    // public function create(Request $request)
+	// {
+    //     $attributes = $request->all();
          
-        return $this->currency->create($attributes);
-	}
+    //     return $this->currency->create($attributes);
+	// }
  
-	public function find($id)
-	{
-        return $this->currency->find($id);
-	}
+	// public function find($id)
+	// {
+    //     return $this->currency->find($id);
+	// }
  
-	public function update(Request $request, $id)
-	{
-        $attributes = $request->all();
+	// public function update(Request $request, $id)
+	// {
+    //     $attributes = $request->all();
 	  
-        return $this->currency->update($id, $attributes);
-	}
+    //     return $this->currency->update($id, $attributes);
+	// }
  
-	public function delete($id)
-	{
-        return $this->currency->delete($id);
-	}
+	// public function delete($id)
+	// {
+    //     return $this->currency->delete($id);
+	// }
 }

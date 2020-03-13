@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\CurrencyController;
+use Illuminate\Support\Facades\Auth;
 
 $botman = resolve('botman');
 
 $botman->hears('Hi|Hello|Hey', function ($bot) {
-    $bot->reply('Hello! My name is Botman and I will help you with the transactions.');
+    $bot->reply("Hello ".Auth::user()['name']."! My name is Botman and I will help you with the transactions.");
 });
 
 $botman->hears('Set default currency', CurrencyController::class.'@setDefault');

@@ -18,23 +18,23 @@ class CurrencyRepository
         return $this->currency->all();
     }
 
-    public function create($attributes)
+    public function getNameAndInitials()
     {
-        return $this->currency->create($attributes);
+        return $this->currency::get(['name', 'initials'])->toArray();
+    }
+
+    public function findByColumn($column, $value)
+    {
+        return $this->currency->where($column, $value)->get();
     }
   
-    public function find($id)
-    {
-        return $this->currency->find($id);
-    }
+    // public function find($id)
+    // {
+    //     return $this->currency->find($id);
+    // }
 
-    public function update($id, $attributes)
-    {
-        return $this->currency->find($id)->update($attributes);
-    }
-
-    public function delete($id)
-    {
-        return $this->currency->find($id)->delete();
-    }
+    // public function delete($id)
+    // {
+    //     return $this->currency->find($id)->delete();
+    // }
 }
