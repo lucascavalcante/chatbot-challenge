@@ -3,21 +3,30 @@
 namespace App\Services;
 
 use App\Currency;
+use App\Repositories\AccountRepository;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CurrencyService
 {
-    protected $currency;
+	protected $currencyRepository;
+	protected $accountRepository;
 
-    public function __construct(CurrencyRepository $currency)
+    public function __construct(CurrencyRepository $currencyRepository, AccountRepository $accountRepository)
     {
-        $this->currency = $currency;
+		$this->currencyRepository = $currencyRepository;
+		$this->accountRepository = $accountRepository;
+	}
+
+	public function getAll()
+	{
+		return $this->currencyRepository->all();
 	}
 	
 	public function checkValidCurrency($currency)
 	{
-		$currencies = $this->currency->getNameAndInitials();
+		$currencies = $this->currencyRepository->getNameAndInitials();
 		foreach($currencies as $c) {
 			if($c['initials'] === strtoupper($currency))
 				return true;
@@ -26,32 +35,32 @@ class CurrencyService
 		return false;
 	}
 
-    // public function index()
-	// {
-	// 	return $this->currency->all();
-	// }
- 
+	public function save($currency)
+	{
+		$currencyId = $this->currencyRepository->findByColumn('initials', $currency)[0]->id;
+		$account = $this->accountRepository->findByColumn('user_id', Auth::id());
+		if(count($account) > 0) {
+			$return = $this->accountRepository->update($account[0]->id, [
+				'user_id' => Auth::id(),
+				'currency_id' => $currencyId,
+				'amount' => $account[0]->amount
+			]);
+		} else {
+			$return = $this->accountRepository->insert([
+				'user_id' => Auth::id(),
+				'currency_id' => $currencyId,
+				'amount' => 0
+			]);
+		}
+
+		return $return;
+
+	}
+
     // public function create(Request $request)
 	// {
     //     $attributes = $request->all();
          
     //     return $this->currency->create($attributes);
-	// }
- 
-	// public function find($id)
-	// {
-    //     return $this->currency->find($id);
-	// }
- 
-	// public function update(Request $request, $id)
-	// {
-    //     $attributes = $request->all();
-	  
-    //     return $this->currency->update($id, $attributes);
-	// }
- 
-	// public function delete($id)
-	// {
-    //     return $this->currency->delete($id);
 	// }
 }

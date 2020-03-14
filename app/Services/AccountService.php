@@ -23,17 +23,13 @@ class AccountService
         $account = $this->accountRepository->findByColumn('user_id', Auth::id());
         if(count($account) > 0) {
             $amount = $transaction === 'deposit' ?  ($account[0]->amount += $value) : ($account[0]->amount -= $value);
-            $return = $this->accountRepository->update($account[0]->id, [
+            $return = $amount >= 0 ? $this->accountRepository->update($account[0]->id, [
                 'user_id' => Auth::id(),
                 'currency_id' => $currencyId,
                 'amount' => $amount
-            ]);
+            ]) : false;
         } else {
-            $return = $this->accountRepository->insert([
-                'user_id' => Auth::id(),
-                'currency_id' => $currencyId,
-                'amount' => $value
-            ]);
+            $return = false;
         }
 
         return $return;
@@ -42,6 +38,9 @@ class AccountService
     public function accountBalance()
     {
         $account = $this->accountRepository->findByColumn('user_id', Auth::id());
-        return "Your current account balance is {$account[0]->amount} {$account[0]->currency->initials}";
+        return [
+            'amount' => $account[0]->amount,
+            'currency' => $account[0]->currency->initials
+        ];
     }
 }

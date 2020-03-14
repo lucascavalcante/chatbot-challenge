@@ -34,10 +34,11 @@
         <botman-tinker api-endpoint="/botman"></botman-tinker>
 
         <div>
-            <p>Commands available:</p>
+            <p>Available commands:</p>
             <p>
                 - Hi / Hello / Hey<br>
-                - Set default currency<br>
+                - Available currencies<br>
+                - Set default currency <code>currency</code> (e.g. set default currency EUR)<br>
                 - Deposit <code>value currency</code> (e.g. deposit 150 USD)<br>
                 - Withdraw <code>value currency</code> (e.g. withdraw 265.48 BRL)<br>
                 - Show account balance<br>
