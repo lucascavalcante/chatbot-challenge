@@ -28,7 +28,7 @@ class CurrencyService
 	{
 		$currencies = $this->currencyRepository->getNameAndInitials();
 		foreach($currencies as $c) {
-			if($c['initials'] === strtoupper($currency))
+			if($c['initials'] === $currency)
 				return true;
 		}
 

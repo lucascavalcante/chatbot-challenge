@@ -27,6 +27,7 @@ class CurrencyController extends Controller
     
     public function setDefault($bot, $currency)
     {
+        $currency = strtoupper($currency);
         if($this->currencyService->checkValidCurrency($currency)) {
             $setCurrency = $this->currencyService->save($currency);
             $bot->reply($setCurrency['msg']);

@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Events\TransactionPerformed;
+use App\Helpers\CurrencyConverstionHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CurrencyRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AccountService
@@ -17,30 +20,45 @@ class AccountService
         $this->currencyRepository = $currencyRepository;
     }
 
-    public function save($value, $currency, $transaction)
+    public function save($valueFrom, $currency, $transaction)
     {
-        $currencyId = $this->currencyRepository->findByColumn('initials', $currency)[0]->id;
         $account = $this->accountRepository->findByColumn('user_id', Auth::id());
         if(count($account) > 0) {
-            $amount = $transaction === 'deposit' ?  ($account[0]->amount += $value) : ($account[0]->amount -= $value);
-            $return = $amount >= 0 ? [
-                'status' => $this->accountRepository->update($account[0]->id, [
+            $currentCurrency = $this->currencyRepository->find($account[0]->currency_id);
+            $valueTo = CurrencyConverstionHelper::convert($currency, $currentCurrency->initials, $valueFrom);
+            $amount = $transaction === 'deposit' ?  ($account[0]->amount += $valueTo) : ($account[0]->amount -= $valueTo);
+            if($amount >= 0) {
+                $return = [
+                    'status' => $this->accountRepository->update($account[0]->id, [
+                        'amount' => round($amount, 2)
+                    ]),
+                    'msg' => ucfirst($transaction).' done!'
+                ];
+
+                // Dispatching event (log every transaction performed)
+                event(new TransactionPerformed([
+                    'operation' => $transaction,
                     'user_id' => Auth::id(),
-                    'currency_id' => $currencyId,
-                    'amount' => $amount
-                ]),
-                'msg' => ucfirst($transaction).' done!'
-            ] : [
-                'status' => false,
-                'msg' => 'Insufficient funds'
-            ];
+                    'currency_from' => $currency,
+                    'value_from' => $valueFrom,
+                    'currency_to' => $currentCurrency->initials,
+                    'value_to' => $valueTo,
+                    'created_at' => Carbon::now()
+                ]));
+            } else {
+                $return = [
+                    'status' => false,
+                    'msg' => 'Insufficient funds'
+                ];
+            }
+
         } else {
             $return = [
                 'status' => false,
                 'msg' => 'Please, set a default currency first.'
             ];
         }
-
+        
         return $return;
     }
 

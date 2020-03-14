@@ -23,15 +23,15 @@ class CurrencyRepository
         return $this->currency::get(['name', 'initials'])->toArray();
     }
 
+    public function find($id)
+    {
+        return $this->currency->find($id);
+    }
+
     public function findByColumn($column, $value)
     {
         return $this->currency->where($column, $value)->get();
     }
-  
-    // public function find($id)
-    // {
-    //     return $this->currency->find($id);
-    // }
 
     // public function delete($id)
     // {
