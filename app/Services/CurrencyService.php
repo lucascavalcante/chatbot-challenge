@@ -24,12 +24,23 @@ class CurrencyService
 		return $this->currencyRepository->all();
 	}
 	
-	public function checkValidCurrency($currency)
+	public function checkValidCurrency($currency = null)
 	{
+		// if currency is null, verify if the user has account to set as default currency
+		// if not exists an account, returns as invalid parameters
+		if($currency === null) {
+			$account = $this->accountRepository->findByColumn('user_id', Auth::id());
+			if(count($account) > 0) {
+				$currency = $this->currencyRepository->find($account[0]->currency_id)->initials;
+			} else {
+				return false;
+			}
+		}
+
 		$currencies = $this->currencyRepository->getNameAndInitials();
 		foreach($currencies as $c) {
 			if($c['initials'] === $currency)
-				return true;
+				return $currency;
 		}
 
 		return false;

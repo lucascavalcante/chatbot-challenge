@@ -25,7 +25,11 @@ class AccountService
         $account = $this->accountRepository->findByColumn('user_id', Auth::id());
         if(count($account) > 0) {
             $currentCurrency = $this->currencyRepository->find($account[0]->currency_id);
-            $valueTo = CurrencyConverstionHelper::convert($currency, $currentCurrency->initials, $valueFrom);
+            
+            $valueTo = $currency !== null ? 
+                CurrencyConverstionHelper::convert($currency, $currentCurrency->initials, $valueFrom) : 
+                $valueFrom;
+
             $amount = $transaction === 'deposit' ?  ($account[0]->amount += $valueTo) : ($account[0]->amount -= $valueTo);
             if($amount >= 0) {
                 $return = [
@@ -39,7 +43,7 @@ class AccountService
                 event(new TransactionPerformed([
                     'operation' => $transaction,
                     'user_id' => Auth::id(),
-                    'currency_from' => $currency,
+                    'currency_from' => $currency !== null ? $currency : $currentCurrency->initials,
                     'value_from' => $valueFrom,
                     'currency_to' => $currentCurrency->initials,
                     'value_to' => $valueTo,
@@ -78,5 +82,10 @@ class AccountService
         }
 
         return $return;
+    }
+
+    public function upperCurrency($currency = null)
+    {
+        return $currency ? strtoupper($currency) : null;
     }
 }

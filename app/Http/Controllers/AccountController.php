@@ -24,9 +24,12 @@ class AccountController extends Controller
         $this->currencyService = $currencyService;
     }
 
-    public function deposit($bot, $value, $currency)
+    public function deposit($bot, $value)
     {
-        $currency = strtoupper($currency);
+        $array = explode(' ', $value);
+        $value = $array[0];
+        $currency = count($array) > 1 ? strtoupper($array[1]) : null;
+
         if($this->currencyService->checkValidCurrency($currency) && doubleval($value)) {
             $deposit = $this->accountService->save($value, $currency, 'deposit');
             $bot->reply($deposit['msg']);
@@ -35,9 +38,12 @@ class AccountController extends Controller
         }
     }
 
-    public function withdraw($bot, $value, $currency)
+    public function withdraw($bot, $value)
     {
-        $currency = strtoupper($currency);
+        $array = explode(' ', $value);
+        $value = $array[0];
+        $currency = count($array) > 1 ? strtoupper($array[1]) : null;
+        
         if($this->currencyService->checkValidCurrency($currency) && doubleval($value)) {
             $withdraw = $this->accountService->save($value, $currency, 'withdraw');
             $bot->reply($withdraw['msg']);
