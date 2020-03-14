@@ -40,17 +40,23 @@ class CurrencyService
 		$currencyId = $this->currencyRepository->findByColumn('initials', $currency)[0]->id;
 		$account = $this->accountRepository->findByColumn('user_id', Auth::id());
 		if(count($account) > 0) {
-			$return = $this->accountRepository->update($account[0]->id, [
-				'user_id' => Auth::id(),
-				'currency_id' => $currencyId,
-				'amount' => $account[0]->amount
-			]);
+			$return = [
+				'status' => $this->accountRepository->update($account[0]->id, [
+					'user_id' => Auth::id(),
+					'currency_id' => $currencyId,
+					'amount' => $account[0]->amount
+				]),
+				'msg' => 'Currency updated.'
+			];
 		} else {
-			$return = $this->accountRepository->insert([
-				'user_id' => Auth::id(),
-				'currency_id' => $currencyId,
-				'amount' => 0
-			]);
+			$return = [
+				'status' => $this->accountRepository->insert([
+					'user_id' => Auth::id(),
+					'currency_id' => $currencyId,
+					'amount' => 0
+				]),
+				'msg' => 'Currency set up.'
+			];
 		}
 
 		return $return;

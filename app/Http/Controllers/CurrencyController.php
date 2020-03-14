@@ -29,11 +29,7 @@ class CurrencyController extends Controller
     {
         if($this->currencyService->checkValidCurrency($currency)) {
             $setCurrency = $this->currencyService->save($currency);
-            if($setCurrency){
-                $bot->reply("Currency set up!");
-            } else {
-                $bot->reply("Something went wrong.");
-            }
+            $bot->reply($setCurrency['msg']);
         } else {
             $bot->reply("Invalid parameters");
         }

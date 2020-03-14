@@ -27,11 +27,7 @@ class AccountController extends Controller
     {
         if($this->currencyService->checkValidCurrency($currency) && doubleval($value)) {
             $deposit = $this->accountService->save($value, $currency, 'deposit');
-            if($deposit){
-                $bot->reply("Deposit done!");
-            } else {
-                $bot->reply("Something went wrong.");
-            }
+            $bot->reply($deposit['msg']);
         } else {
             $bot->reply("Invalid parameters");
         }
@@ -41,11 +37,7 @@ class AccountController extends Controller
     {
         if($this->currencyService->checkValidCurrency($currency) && doubleval($value)) {
             $withdraw = $this->accountService->save($value, $currency, 'withdraw');
-            if($withdraw){
-                $bot->reply("Withdraw done!");
-            } else {
-                $bot->reply("Something went wrong.");
-            }
+            $bot->reply($withdraw['msg']);
         } else {
             $bot->reply("Invalid parameters");
         }
@@ -54,7 +46,7 @@ class AccountController extends Controller
     public function accountBalance($bot)
     {
         $accountBalance = $this->accountService->accountBalance();
-        $bot->reply("Your current account balance is {$accountBalance['amount']} {$accountBalance['currency']}");
+        $bot->reply($accountBalance['msg']);
     }
 
 }
