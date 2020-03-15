@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Currency;
 use App\Repositories\AccountRepository;
 use App\Repositories\CurrencyRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CurrencyService
@@ -13,21 +11,38 @@ class CurrencyService
 	protected $currencyRepository;
 	protected $accountRepository;
 
+	/**
+     * Create a new CurrencyService instance
+     * 
+     * @param CurrencyRepository $currencyRepository Dependency injection from repository layer
+     * @param AccountRepository $accountRepository Dependency injection from repository layer
+     */
     public function __construct(CurrencyRepository $currencyRepository, AccountRepository $accountRepository)
     {
 		$this->currencyRepository = $currencyRepository;
 		$this->accountRepository = $accountRepository;
 	}
 
-	public function getAll()
+	/**
+	 * Get all currencies available
+	 * 
+	 * @return object
+	 */
+	public function getAll(): object
 	{
 		return $this->currencyRepository->all();
 	}
 	
-	public function checkValidCurrency($currency = null)
+	/**
+	 * Check if the currency typed by the user is among the options available
+	 * 
+	 * @param string $currency Currency typed by the user to set as default
+	 * (if null will be the same from current account / if account doesn't exist operation will be not allowed)
+	 * 
+	 * @return bool
+	 */
+	public function checkValidCurrency(?string $currency = null): bool
 	{
-		// if currency is null, verify if the user has account to set as default currency
-		// if not exists an account, returns as invalid parameters
 		if($currency === null) {
 			$account = $this->accountRepository->findByColumn('user_id', Auth::id());
 			if(count($account) > 0) {
@@ -40,13 +55,20 @@ class CurrencyService
 		$currencies = $this->currencyRepository->getNameAndInitials();
 		foreach($currencies as $c) {
 			if($c['initials'] === $currency)
-				return $currency;
+				return true;
 		}
 
 		return false;
 	}
 
-	public function save($currency)
+	/**
+	 * Save the currency typed by the user as default into the account (if account doesn't exist, it will be created)
+	 * 
+	 * @param string $currency Currency typed by the user
+	 * 
+	 * @return array
+	 */
+	public function save(string $currency): array
 	{
 		$currencyId = $this->currencyRepository->findByColumn('initials', $currency)[0]->id;
 		$account = $this->accountRepository->findByColumn('user_id', Auth::id());
@@ -73,11 +95,4 @@ class CurrencyService
 		return $return;
 
 	}
-
-    // public function create(Request $request)
-	// {
-    //     $attributes = $request->all();
-         
-    //     return $this->currency->create($attributes);
-	// }
 }

@@ -2,25 +2,40 @@
 
 namespace App\Services;
 
-use App\Events\TransactionPerformed;
 use App\Helpers\CurrencyConverstionHelper;
-use App\Repositories\AccountRepository;
 use App\Repositories\CurrencyRepository;
-use Carbon\Carbon;
+use App\Repositories\AccountRepository;
+use App\Events\TransactionPerformed;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class AccountService
 {
     protected $accountRepository;
     protected $currencyRepository;
 
+    /**
+     * Create a new AccountService instance
+     * 
+     * @param AccountRepository $accountRepository Dependency injection from repository layer
+     * @param CurrencyRepository $currencyRepository Dependency injection from repository layer
+     */
     public function __construct(AccountRepository $accountRepository, CurrencyRepository $currencyRepository)
     {
         $this->accountRepository = $accountRepository;
         $this->currencyRepository = $currencyRepository;
     }
 
-    public function save($valueFrom, $currency, $transaction)
+    /**
+     * Apply the business logic to save the transaction (deposit or withdraw)
+     * 
+     * @param float $valueFrom Value typed by the user to transact
+     * @param string $currency Currency typed by the user to transact (if null will be the same from current account)
+     * @param string $transaction Transaction to be performed (deposit or with draw)
+     * 
+     * @return array
+     */
+    public function save(float $valueFrom, ?string $currency, string $transaction): array
     {
         $account = $this->accountRepository->findByColumn('user_id', Auth::id());
         if(count($account) > 0) {
@@ -66,7 +81,12 @@ class AccountService
         return $return;
     }
 
-    public function accountBalance()
+    /**
+     * Apply the business logic to get current account balance
+     * 
+     * @return array
+     */
+    public function accountBalance(): array
     {
         $account = $this->accountRepository->findByColumn('user_id', Auth::id());
         if(count($account) > 0) {
@@ -82,10 +102,5 @@ class AccountService
         }
 
         return $return;
-    }
-
-    public function upperCurrency($currency = null)
-    {
-        return $currency ? strtoupper($currency) : null;
     }
 }
