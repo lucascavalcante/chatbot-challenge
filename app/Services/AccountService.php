@@ -54,7 +54,7 @@ class AccountService
                     'msg' => ucfirst($transaction).' done!'
                 ];
 
-                // Dispatching event (log every transaction performed)
+                // Dispatching event (logging every transaction performed)
                 event(new TransactionPerformed([
                     'operation' => $transaction,
                     'user_id' => Auth::id(),
