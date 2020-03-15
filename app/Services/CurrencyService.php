@@ -102,4 +102,17 @@ class CurrencyService
 		return $return;
 
 	}
+
+	/**
+	 * Check if the currency was typed by the user or not
+	 * 
+	 * @param string $value Value that came from chat
+	 * 
+	 * @return array
+	 */
+	public function checkCurrencyIsNull(string $value): array
+    {
+        $array = explode(' ', $value);
+        return [$array[0], count($array) > 1 ? strtoupper($array[1]) : null];
+    }
 }

@@ -32,12 +32,9 @@ class AccountController extends Controller
      */
     public function deposit(BotMan $bot, string $value)
     {
-        $array = explode(' ', $value);
-        $value = $array[0];
-        $currency = count($array) > 1 ? strtoupper($array[1]) : null;
-
-        if($this->currencyService->checkValidCurrency($currency) && floatval($value)) {
-            $deposit = $this->accountService->save(floatval($value), $currency, 'deposit');
+        list($number, $currency) = $this->currencyService->checkCurrencyIsNull($value);
+        if($this->currencyService->checkValidCurrency($currency) && floatval($number)) {
+            $deposit = $this->accountService->save(floatval($number), $currency, 'deposit');
             $bot->reply($deposit['msg']);
         } else {
             $bot->reply("Invalid parameters");
@@ -52,12 +49,9 @@ class AccountController extends Controller
      */
     public function withdraw(Botman $bot, string $value)
     {
-        $array = explode(' ', $value);
-        $value = $array[0];
-        $currency = count($array) > 1 ? strtoupper($array[1]) : null;
-        
-        if($this->currencyService->checkValidCurrency($currency) && floatval($value)) {
-            $withdraw = $this->accountService->save(floatval($value), $currency, 'withdraw');
+        list($number, $currency) = $this->currencyService->checkCurrencyIsNull($value);
+        if($this->currencyService->checkValidCurrency($currency) && floatval($number)) {
+            $withdraw = $this->accountService->save(floatval($number), $currency, 'withdraw');
             $bot->reply($withdraw['msg']);
         } else {
             $bot->reply("Invalid parameters");
