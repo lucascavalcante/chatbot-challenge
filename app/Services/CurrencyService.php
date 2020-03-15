@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\CurrencyConverstionHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Support\Facades\Auth;
@@ -73,11 +74,17 @@ class CurrencyService
 		$currencyId = $this->currencyRepository->findByColumn('initials', $currency)[0]->id;
 		$account = $this->accountRepository->findByColumn('user_id', Auth::id());
 		if(count($account) > 0) {
+			$currentCurrency = $this->currencyRepository->find($account[0]->currency_id);
+
+			$value = strtoupper($currency) !== $currentCurrency->initials ? 
+                CurrencyConverstionHelper::convert($currentCurrency->initials, $currency, $account[0]->amount) : 
+				$account[0]->amount;
+				
 			$return = [
 				'status' => $this->accountRepository->update($account[0]->id, [
 					'user_id' => Auth::id(),
 					'currency_id' => $currencyId,
-					'amount' => $account[0]->amount
+					'amount' => round($value, 2)
 				]),
 				'msg' => 'Currency updated.'
 			];
