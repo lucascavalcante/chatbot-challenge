@@ -38,13 +38,17 @@ Configuring Docker
 > `cd laradock`
 > `cp env-example .env`
 > `docker-compose up nginx php-fpm mysql`
-* If nginx conflicts with another port, you can set a new port on line 252 in `.env` file)
+** If nginx conflicts with another port, you can set a new port on line 252 in `.env` file)
 
 (open a new terminal) Back to root folder 
 > `cd ..`
 
 Run a composer script that generates the key, runs migrates and runs seeders
 > `composer key-migrations-and-seeders`
+
+Go to the browser
+> `http://127.0.0.1:{port set up on nginx}`
+** If you didn't any conflict with ports, the default port is 80, else you put the port set up on `.env` file
 
 Author:
 * [Lucas Cavalcante](https://lucascavalcante.dev)
