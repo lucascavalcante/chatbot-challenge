@@ -12,7 +12,9 @@ A chatbot that manages users and accounts. Besides that, it manages exchange cur
 
 Clone the repository
 > `git clone https://github.com/lucascavalcante/chatbot-challenge.git`
+
 or
+
 > `git clone git@github.com:lucascavalcante/chatbot-challenge.git`
 
 Install all dependencies
