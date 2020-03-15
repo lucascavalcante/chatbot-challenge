@@ -1,25 +1,50 @@
-<p align="center"><img height="188" width="198" src="https://botman.io/img/botman.png"></p>
-<h1 align="center">BotMan Studio</h1>
+# Chatbot Challenge
 
-## About BotMan Studio
+A chatbot that manages users and accounts. Besides that, it manages exchange currencies.
 
-While BotMan itself is framework agnostic, BotMan is also available as a bundle with the great [Laravel](https://laravel.com) PHP framework. This bundled version is called BotMan Studio and makes your chatbot development experience even better. By providing testing tools, an out of the box web driver implementation and additional tools like an enhanced CLI with driver installation, class generation and configuration support, it speeds up the development significantly.
+## Requirements
 
-## Documentation
+* Docker/Docker-compose
+* Composer
+* Nginx, PHP 7.2 and Mysql (managed by Docker)
 
-You can find the BotMan and BotMan Studio documentation at [http://botman.io](http://botman.io).
+# Installation
 
-## Support the development
-**Do you like this project? Support it by donating**
+Clone the repository
+> `git clone https://github.com/lucascavalcante/chatbot-challenge.git`
+or
+> `git clone git@github.com:lucascavalcante/chatbot-challenge.git`
 
-- PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=m%2epociot%40googlemail%2ecom&lc=CY&item_name=BotMan&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest)
-- Patreon: [Donate](https://www.patreon.com/botman)
+Install all dependencies
+> `composer install`
 
-## Security Vulnerabilities
+Create a `.env` file
+> `cp .env.example .env`
 
-If you discover a security vulnerability within BotMan or BotMan Studio, please send an e-mail to Marcel Pociot at m.pociot@gmail.com. All security vulnerabilities will be promptly addressed.
+Add/replace these configurations on `.env` file
 
-## License
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=default
+DB_USERNAME=default
+DB_PASSWORD=secret
 
-BotMan is free software distributed under the terms of the MIT license.
+API_CURRENCY_CONVERSION={api key from https://free.currencyconverterapi.com}
+```
 
+Configuring Docker
+> `cd laradock`
+> `cp env-example .env`
+> `docker-compose up nginx php-fpm mysql`
+* If nginx conflicts with another port, you can set a new port on line 252 in `.env` file)
+
+(open a new terminal) Back to root folder 
+> `cd ..`
+
+Run a composer script that generates the key, runs migrates and runs seeders
+> `composer key-migrations-and-seeders`
+
+Author:
+* [Lucas Cavalcante](https://lucascavalcante.dev)
