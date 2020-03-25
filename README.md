@@ -38,7 +38,9 @@ API_CURRENCY_CONVERSION={api key from https://free.currencyconverterapi.com}
 
 Configuring Docker
 > `cd laradock`
+
 > `cp env-example .env`
+
 > `docker-compose up nginx php-fpm mysql`
 
 ** If nginx conflicts with another port, you can set a new port on line 252 in `.env` file)
